@@ -22,3 +22,24 @@ func TestPatternCount(t *testing.T) {
 		}
 	}
 }
+
+func TestApproximatePatternCount(t *testing.T) {
+	type testinput struct {
+		text, pattern string
+		maxDistance   int
+	}
+	type testpair struct {
+		input  testinput
+		output int
+	}
+	tests := []testpair{
+		{testinput{"AACAAGCTGATAAACATTTAAAGAG", "AAAAA", 2}, 11},
+		{testinput{"TTTAGAGCCTTCAGAGG", "GAGG", 2}, 4},
+	}
+	for _, pair := range tests {
+		v := ApproximatePatternCount(pair.input.text, pair.input.pattern, pair.input.maxDistance)
+		if v != pair.output {
+			t.Error("For", pair.input, "expected", pair.output, "got", v)
+		}
+	}
+}

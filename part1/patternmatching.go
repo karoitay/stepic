@@ -1,22 +1,20 @@
 package part1
 
-import "strings"
-
-func PatternMatching(text, pattern string) []int {
-	indexFrom := func(i int) func(string, string) int {
-		return func(text, pattern string) int {
-			v := strings.Index(text[i:], pattern)
-			if v == -1 {
-				return v
-			}
-			return i + v
+func indexesOf(text, pattern string, f stringPredicate) []int {
+	var res []int
+	l := len(pattern)
+	for i := 0; i <= len(text)-l; i++ {
+		if f(pattern, text[i:i+l]) {
+			res = append(res, i)
 		}
 	}
-	var res []int
-	i := strings.Index(text, pattern)
-	for i != -1 {
-		res = append(res, i)
-		i = indexFrom(i+1)(text, pattern)
-	}
 	return res
+}
+
+func PatternMatching(text, pattern string) []int {
+	return indexesOf(text, pattern, exactStringMatch)
+}
+
+func ApproximatePatternMatching(text, pattern string, d int) []int {
+	return indexesOf(text, pattern, maxHammingDistanceMatch(d))
 }
