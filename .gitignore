@@ -22,3 +22,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# main.go is only used to run different challenge every time - no need to keep.
+main.go
+
