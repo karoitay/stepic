@@ -26,3 +26,6 @@ _testmain.go
 # main.go is only used to run different challenge every time - no need to keep.
 main.go
 
+#text files should be out as well
+*.txt
+
