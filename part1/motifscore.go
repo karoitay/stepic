@@ -30,6 +30,18 @@ func motifsProfile(motifs []string) map[byte][]float64 {
 	return m
 }
 
+func motifsPseudoCountProfile(motifs []string) map[byte][]float64 {
+	m := map[byte][]float64{}
+	l := float64(len(motifs)) * 2
+	for k, v := range motifsCount(motifs) {
+		m[k] = make([]float64, len(v), len(v))
+		for i := 0; i < len(v); i++ {
+			m[k][i] = float64(v[i]+1) / l
+		}
+	}
+	return m
+}
+
 func MotifsEntropy(motifs []string) float64 {
 	entropy := 0.0
 	for _, v := range motifsProfile(motifs) {

@@ -56,3 +56,26 @@ func TestGreedyMotifSearch(t *testing.T) {
 		}
 	}
 }
+
+func TestPseudoCountGreedyMotifSearch(t *testing.T) {
+	type testinput struct {
+		k   int
+		dna []string
+	}
+	type testpair struct {
+		input  testinput
+		output []string
+	}
+	tests := []testpair{
+		{
+			testinput{3, []string{"GGCGTTCAGGCA", "AAGAATCAGTCA", "CAAGGAGTTCGC", "CACGTCAATCAC", "CAATAATATTCG"}},
+			[]string{"TTC", "ATC", "TTC", "ATC", "TTC"},
+		},
+	}
+	for _, pair := range tests {
+		v := PseudoCountGreedyMotifSearch(pair.input.dna, pair.input.k)
+		if !reflect.DeepEqual(v, pair.output) {
+			t.Error("For", pair.input, "expected", pair.output, "got", v)
+		}
+	}
+}
