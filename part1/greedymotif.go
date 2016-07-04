@@ -2,14 +2,19 @@ package part1
 
 type profileFunc func([]string) map[byte][]float64
 
+func stringProbability(text string, profile map[byte][]float64) float64 {
+	prob := 1.0
+	for i := 0; i < len(text); i++ {
+		prob *= profile[text[i]][i]
+	}
+	return prob
+}
+
 func ProfileMostProbable(text string, k int, profile map[byte][]float64) string {
 	res := ""
 	max := -1.0
 	for i := 0; i <= len(text)-k; i++ {
-		prob := 1.0
-		for j := i; j < i+k; j++ {
-			prob *= profile[text[j]][j-i]
-		}
+		prob := stringProbability(text[i:i+k], profile)
 		if prob > max {
 			max = prob
 			res = text[i : i+k]
