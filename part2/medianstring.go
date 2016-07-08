@@ -1,6 +1,9 @@
 package part2
 
-import "github.com/karoitay/stepic/part1"
+import (
+	"github.com/karoitay/stepic/part1"
+	"github.com/karoitay/stepic/utils"
+)
 
 func distance(pattern string, dna []string) int {
 	d := 0
@@ -19,7 +22,7 @@ func distance(pattern string, dna []string) int {
 }
 
 func MedianString(k int, dna []string) string {
-	iter := part1.NewKmersIterator(k)
+	iter := utils.NewKmersIterator(k)
 	min := k + 1
 	pattern := ""
 	for kmer := iter.Next(); kmer != ""; kmer = iter.Next() {
