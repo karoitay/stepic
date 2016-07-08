@@ -1,4 +1,6 @@
-package part1
+package part2
+
+import "github.com/karoitay/stepic/part1"
 
 func distance(pattern string, dna []string) int {
 	d := 0
@@ -6,7 +8,7 @@ func distance(pattern string, dna []string) int {
 	for _, text := range dna {
 		min := k
 		for i := 0; i <= len(text)-len(pattern); i++ {
-			h := HammingDistance(pattern, text[i:i+k])
+			h := part1.HammingDistance(pattern, text[i:i+k])
 			if h < min {
 				min = h
 			}
@@ -17,10 +19,10 @@ func distance(pattern string, dna []string) int {
 }
 
 func MedianString(k int, dna []string) string {
-	iter := NewKmersIterator(k)
+	iter := part1.NewKmersIterator(k)
 	min := k + 1
 	pattern := ""
-	for kmer := iter.next(); kmer != ""; kmer = iter.next() {
+	for kmer := iter.Next(); kmer != ""; kmer = iter.Next() {
 		d := distance(kmer, dna)
 		if d < min {
 			min = d

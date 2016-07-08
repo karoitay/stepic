@@ -1,10 +1,12 @@
-package part1
+package part2
+
+import "github.com/karoitay/stepic/part1"
 
 func MotifEnumeration(dna []string, k, d int) []string {
 	m := map[string]bool{}
 	seq := dna[0]
 	for i := 0; i < len(seq)-k; i++ {
-		for n := range Neighbours(seq[i:i+k], d) {
+		for n := range part1.Neighbours(seq[i:i+k], d) {
 			m[n] = false
 		}
 	}
@@ -12,7 +14,7 @@ func MotifEnumeration(dna []string, k, d int) []string {
 		for _, seq := range dna[1:] {
 			found := false
 			for i := 0; i <= len(seq)-k; i++ {
-				if HammingDistance(pattern, seq[i:i+k]) <= d {
+				if part1.HammingDistance(pattern, seq[i:i+k]) <= d {
 					found = true
 				}
 			}

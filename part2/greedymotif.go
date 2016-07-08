@@ -1,4 +1,4 @@
-package part1
+package part2
 
 type profileFunc func([]string) map[byte][]float64
 

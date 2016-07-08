@@ -27,7 +27,7 @@ func NewKmersIterator(k int) *kmersIterator {
 	return &iter
 }
 
-func (iter *kmersIterator) next() string {
+func (iter *kmersIterator) Next() string {
 	if iter.prev == iter.last {
 		return ""
 	} else if iter.prev == "" {
