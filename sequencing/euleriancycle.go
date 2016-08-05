@@ -69,7 +69,6 @@ func cyclicShiftLeft(path []string, shiftBy int) {
 			path[i] = buffer[newValIndex%len(path)]
 		}
 	}
-
 }
 
 func copyGraph(graph map[string][]string) map[string][]string {
