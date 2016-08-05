@@ -6,10 +6,10 @@ import (
 	"testing"
 )
 
-func TestDeBruijn(t *testing.T) {
+func TestDeBruijnFromText(t *testing.T) {
 	k := 4
 	text := "AAGATTCTCTAAGA"
-	actual := DeBruijn(k, text)
+	actual := DeBruijnFromText(k, text)
 	for _, v := range actual {
 		sort.Strings(v)
 	}
@@ -27,5 +27,24 @@ func TestDeBruijn(t *testing.T) {
 	}
 	if !reflect.DeepEqual(expected, actual) {
 		t.Error("For {k:", k, "text:", text, "} expected", expected, "got", actual)
+	}
+}
+
+func TestDeBruijnFromKmers(t *testing.T) {
+	kmers := []string{"GAGG", "CAGG", "GGGG", "GGGA", "CAGG", "AGGG", "GGAG"}
+	actual := DeBruijnFromKmers(kmers)
+	for _, v := range actual {
+		sort.Strings(v)
+	}
+
+	expected := map[string][]string{
+		"AGG": []string{"GGG"},
+		"CAG": []string{"AGG", "AGG"},
+		"GAG": []string{"AGG"},
+		"GGA": []string{"GAG"},
+		"GGG": []string{"GGA", "GGG"},
+	}
+	if !reflect.DeepEqual(expected, actual) {
+		t.Error("For", kmers, "expected", expected, "got", actual)
 	}
 }
