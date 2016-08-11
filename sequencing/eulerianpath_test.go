@@ -6,7 +6,7 @@ import (
 )
 
 func TestEulerianPath(t *testing.T) {
-	input := map[string][]string{
+	input := GraphFromMap(map[string][]string{
 		"0": []string{"2"},
 		"1": []string{"3"},
 		"2": []string{"1"},
@@ -15,11 +15,12 @@ func TestEulerianPath(t *testing.T) {
 		"7": []string{"8"},
 		"8": []string{"9"},
 		"9": []string{"6"},
-	}
+	}, ReadParser{})
 
 	actual := EulerianPath(input)
 
-	expected := []string{"6", "7", "8", "9", "6", "3", "0", "2", "1", "3", "4"}
+	expected := []Node{Read("6"), Read("7"), Read("8"), Read("9"), Read("6"),
+		Read("3"), Read("0"), Read("2"), Read("1"), Read("3"), Read("4")}
 	if !reflect.DeepEqual(expected, actual) {
 		t.Error("For", input, "expected", expected, "got", actual)
 	}

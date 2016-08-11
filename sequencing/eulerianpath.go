@@ -1,22 +1,19 @@
 package sequencing
 
-import (
-	"fmt"
-	"strconv"
-)
+import "strconv"
 
 // EulerianPath finds an Eulerian path in a graph
-func EulerianPath(graph map[string][]string) []string {
+func EulerianPath(graph *Graph) []Node {
 	from, to := findEdgeToAdd(graph)
-	if from == "" || to == "" {
+	if from == nil || to == nil {
 		return EulerianCycle(graph)
 	}
-	graph[from] = append(graph[from], to)
+	(*graph)[*from] = append((*graph)[*from], *to)
 	path := EulerianCycle(graph)[1:]
 	// now we need to remove from->to from the path.
 	i := 1
 	for i < len(path) {
-		if path[i-1] == from && path[i] == to {
+		if path[i-1] == *from && path[i] == *to {
 			cyclicShiftLeft(path, i)
 			break
 		}
@@ -25,9 +22,9 @@ func EulerianPath(graph map[string][]string) []string {
 	return path
 }
 
-func unbalancedNodes(graph map[string][]string) map[string]int {
-	m := map[string]int{}
-	for k, v := range graph {
+func unbalancedNodes(graph *Graph) map[Node]int {
+	m := map[Node]int{}
+	for k, v := range *graph {
 		addDegree(m, k, len(v))
 		for _, n := range v {
 			addDegree(m, n, -1)
@@ -39,33 +36,30 @@ func unbalancedNodes(graph map[string][]string) map[string]int {
 	return m
 }
 
-func addDegree(m map[string]int, node string, degree int) {
+func addDegree(m map[Node]int, node Node, degree int) {
 	m[node] = m[node] + degree
 	if m[node] == 0 {
 		delete(m, node)
 	}
 }
 
-func findEdgeToAdd(graph map[string][]string) (string, string) {
+func findEdgeToAdd(graph *Graph) (*Node, *Node) {
 	un := unbalancedNodes(graph)
 	if len(un) != 2 {
-		return "", ""
+		return nil, nil
 	}
-	var from, to string
+	var from, to Node
 	for k, v := range un {
 		if v == 1 {
 			to = k
 		} else if v == -1 {
 			from = k
 		} else {
-			panic(k + " degree is not 1 but " + strconv.Itoa(v))
+			panic(k.ToString() + " degree is not 1 but " + strconv.Itoa(v))
 		}
 	}
-	if from == "" || to == "" {
-		fmt.Println(from)
-		fmt.Println(to)
-		fmt.Println(un)
+	if from == nil || to == nil {
 		panic("could not build a cyclic graph")
 	}
-	return from, to
+	return &from, &to
 }

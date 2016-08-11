@@ -6,7 +6,7 @@ import (
 )
 
 func TestEulerianCycle(t *testing.T) {
-	input := map[string][]string{
+	input := GraphFromMap(map[string][]string{
 		"0": []string{"3"},
 		"1": []string{"0"},
 		"2": []string{"1", "6"},
@@ -17,17 +17,19 @@ func TestEulerianCycle(t *testing.T) {
 		"7": []string{"9"},
 		"8": []string{"7"},
 		"9": []string{"6"},
-	}
+	}, ReadParser{})
 
 	actual := EulerianCycle(input)
 
-	expected := []string{"6", "8", "7", "9", "6", "5", "4", "2", "1", "0", "3", "2", "6"}
+	expected := []Node{Read("6"), Read("8"), Read("7"), Read("9"),
+		Read("6"), Read("5"), Read("4"), Read("2"), Read("1"), Read("0"),
+		Read("3"), Read("2"), Read("6")}
 	if !isCyclicEqual(expected, actual, t) {
 		t.Error("For", input, "expected", expected, "got", actual)
 	}
 }
 
-func isCyclicEqual(expected, actual []string, t *testing.T) bool {
+func isCyclicEqual(expected, actual []Node, t *testing.T) bool {
 	assertCyclic("expected", expected, t)
 	assertCyclic("actual", actual, t)
 	expected = expected[1:]
@@ -41,7 +43,7 @@ func isCyclicEqual(expected, actual []string, t *testing.T) bool {
 	return false
 }
 
-func assertCyclic(name string, buffer []string, t *testing.T) {
+func assertCyclic(name string, buffer []Node, t *testing.T) {
 	if buffer[0] != buffer[len(buffer)-1] {
 		t.Error(name, "is not cyclic", buffer)
 	}

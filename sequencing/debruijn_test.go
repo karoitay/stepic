@@ -14,18 +14,18 @@ func TestDeBruijnFromText(t *testing.T) {
 		sort.Sort(Nodes(v))
 	}
 
-	expected := Graph(map[Node][]Node{
-		Node(Read("AAG")): []Node{Read("AGA"), Read("AGA")},
-		Node(Read("AGA")): []Node{Read("GAT")},
-		Node(Read("ATT")): []Node{Read("TTC")},
-		Node(Read("CTA")): []Node{Read("TAA")},
-		Node(Read("CTC")): []Node{Read("TCT")},
-		Node(Read("GAT")): []Node{Read("ATT")},
-		Node(Read("TAA")): []Node{Read("AAG")},
-		Node(Read("TCT")): []Node{Read("CTA"), Read("CTC")},
-		Node(Read("TTC")): []Node{Read("TCT")},
-	})
-	if !reflect.DeepEqual(expected, *actual) {
+	expected := GraphFromMap(map[string][]string{
+		"AAG": []string{"AGA", "AGA"},
+		"AGA": []string{"GAT"},
+		"ATT": []string{"TTC"},
+		"CTA": []string{"TAA"},
+		"CTC": []string{"TCT"},
+		"GAT": []string{"ATT"},
+		"TAA": []string{"AAG"},
+		"TCT": []string{"CTA", "CTC"},
+		"TTC": []string{"TCT"},
+	}, ReadParser{})
+	if !reflect.DeepEqual(expected, actual) {
 		t.Error("For {k:", k, "text:", text, "} expected", expected, "got", actual)
 	}
 }
@@ -37,14 +37,14 @@ func TestDeBruijnFromKmers(t *testing.T) {
 		sort.Sort(Nodes(v))
 	}
 
-	expected := Graph(map[Node][]Node{
-		Node(Read("AGG")): []Node{Read("GGG")},
-		Node(Read("CAG")): []Node{Read("AGG"), Read("AGG")},
-		Node(Read("GAG")): []Node{Read("AGG")},
-		Node(Read("GGA")): []Node{Read("GAG")},
-		Node(Read("GGG")): []Node{Read("GGA"), Read("GGG")},
-	})
-	if !reflect.DeepEqual(expected, *actual) {
+	expected := GraphFromMap(map[string][]string{
+		"AGG": []string{"GGG"},
+		"CAG": []string{"AGG", "AGG"},
+		"GAG": []string{"AGG"},
+		"GGA": []string{"GAG"},
+		"GGG": []string{"GGA", "GGG"},
+	}, ReadParser{})
+	if !reflect.DeepEqual(expected, actual) {
 		t.Error("For", kmers, "expected", expected, "got", actual)
 	}
 }
