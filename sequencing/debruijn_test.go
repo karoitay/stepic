@@ -1,18 +1,11 @@
 package sequencing
 
-import (
-	"reflect"
-	"sort"
-	"testing"
-)
+import "testing"
 
 func TestDeBruijnFromText(t *testing.T) {
 	k := 4
 	text := "AAGATTCTCTAAGA"
 	actual := DeBruijnFromText(k, text)
-	for _, v := range *actual {
-		sort.Sort(Nodes(v))
-	}
 
 	expected := GraphFromMap(map[string][]string{
 		"AAG": []string{"AGA", "AGA"},
@@ -25,7 +18,7 @@ func TestDeBruijnFromText(t *testing.T) {
 		"TCT": []string{"CTA", "CTC"},
 		"TTC": []string{"TCT"},
 	}, KmerReadParser{})
-	if !reflect.DeepEqual(expected, actual) {
+	if !actual.equals(expected) {
 		t.Error("For {k:", k, "text:", text, "} expected", expected, "got", actual)
 	}
 }
@@ -33,9 +26,6 @@ func TestDeBruijnFromText(t *testing.T) {
 func TestDeBruijnFromKmers(t *testing.T) {
 	kmers := []string{"GAGG", "CAGG", "GGGG", "GGGA", "CAGG", "AGGG", "GGAG"}
 	actual := DeBruijnFromKmers(kmers)
-	for _, v := range *actual {
-		sort.Sort(Nodes(v))
-	}
 
 	expected := GraphFromMap(map[string][]string{
 		"AGG": []string{"GGG"},
@@ -44,7 +34,7 @@ func TestDeBruijnFromKmers(t *testing.T) {
 		"GGA": []string{"GAG"},
 		"GGG": []string{"GGA", "GGG"},
 	}, KmerReadParser{})
-	if !reflect.DeepEqual(expected, actual) {
+	if !actual.equals(expected) {
 		t.Error("For", kmers, "expected", expected, "got", actual)
 	}
 }
@@ -54,9 +44,6 @@ func TestDeBruijnFromReads(t *testing.T) {
 		"AAT|CAT", "ATG|ATG", "ATG|ATG", "CAT|GAT", "CCA|GGA", "GCC|GGG", "GGG|GTT", "TAA|CCA", "TGC|TGG", "TGG|TGT",
 	}
 	actual := DeBruijnFromReads(readPairs, ReadPairParser{Gap: 2})
-	for _, v := range *actual {
-		sort.Sort(Nodes(v))
-	}
 
 	expected := GraphFromMap(map[string][]string{
 		"AA|CA": {"AT|AT"},
@@ -68,7 +55,7 @@ func TestDeBruijnFromReads(t *testing.T) {
 		"TA|CC": {"AA|CA"},
 		"TG|TG": {"GC|GG", "GG|GT"},
 	}, ReadPairParser{Gap: 3})
-	if !reflect.DeepEqual(expected, actual) {
+	if !actual.equals(expected) {
 		t.Error("For", readPairs, "expected", expected, "got", actual)
 	}
 }

@@ -12,14 +12,6 @@ type NodeParser interface {
 	ParseNode(s string) Node
 }
 
-// Nodes implements sort.Interface for []Node based on the node's ToString()
-// value
-type Nodes []Node
-
-func (a Nodes) Len() int           { return len(a) }
-func (a Nodes) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a Nodes) Less(i, j int) bool { return a[i].ToString() < a[j].ToString() }
-
 // Edge is an edge in a graph.
 type Edge struct {
 	From, To Node
