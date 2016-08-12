@@ -15,12 +15,13 @@ func TestEulerianPath(t *testing.T) {
 		"7": []string{"8"},
 		"8": []string{"9"},
 		"9": []string{"6"},
-	}, ReadParser{})
+	}, KmerReadParser{})
 
 	actual := EulerianPath(input)
 
-	expected := []Node{Read("6"), Read("7"), Read("8"), Read("9"), Read("6"),
-		Read("3"), Read("0"), Read("2"), Read("1"), Read("3"), Read("4")}
+	expected := []Node{KmerRead("6"), KmerRead("7"), KmerRead("8"),
+		KmerRead("9"), KmerRead("6"), KmerRead("3"), KmerRead("0"),
+		KmerRead("2"), KmerRead("1"), KmerRead("3"), KmerRead("4")}
 	if !reflect.DeepEqual(expected, actual) {
 		t.Error("For", input, "expected", expected, "got", actual)
 	}

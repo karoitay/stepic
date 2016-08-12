@@ -17,13 +17,13 @@ func TestEulerianCycle(t *testing.T) {
 		"7": []string{"9"},
 		"8": []string{"7"},
 		"9": []string{"6"},
-	}, ReadParser{})
+	}, KmerReadParser{})
 
 	actual := EulerianCycle(input)
 
-	expected := []Node{Read("6"), Read("8"), Read("7"), Read("9"),
-		Read("6"), Read("5"), Read("4"), Read("2"), Read("1"), Read("0"),
-		Read("3"), Read("2"), Read("6")}
+	expected := []Node{KmerRead("6"), KmerRead("8"), KmerRead("7"),
+		KmerRead("9"), KmerRead("6"), KmerRead("5"), KmerRead("4"), KmerRead("2"),
+		KmerRead("1"), KmerRead("0"), KmerRead("3"), KmerRead("2"), KmerRead("6")}
 	if !isCyclicEqual(expected, actual, t) {
 		t.Error("For", input, "expected", expected, "got", actual)
 	}
