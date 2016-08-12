@@ -1,26 +1,15 @@
 package sequencing
 
-import "strings"
-
 // StringSpelledByGappedPatterns returns the string spelled by the given gapped
 // pattern or an empty string if none exists.
 func StringSpelledByGappedPatterns(gappedPatterns []string, k, d int) string {
 	firstPatterns, secondPatterns := split(gappedPatterns, k, d)
-	prefixString := stringSpelledByGappedPatterns(firstPatterns)
-	suffixString := stringSpelledByGappedPatterns(secondPatterns)
+	prefixString := GenomePath(firstPatterns)
+	suffixString := GenomePath(secondPatterns)
 	if prefixString[k+d:] != suffixString[:len(suffixString)-k-d] {
 		return ""
 	}
 	return prefixString[:k+d] + suffixString
-}
-
-func stringSpelledByGappedPatterns(pattern []string) string {
-	ret := make([]string, len(pattern))
-	ret[0] = pattern[0]
-	for i := 1; i < len(pattern); i++ {
-		ret[i] = string(pattern[i][len(pattern[i])-1])
-	}
-	return strings.Join(ret, "")
 }
 
 func split(gappedPatterns []string, k, d int) ([]string, []string) {
