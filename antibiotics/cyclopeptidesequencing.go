@@ -1,43 +1,44 @@
 package antibiotics
 
 import (
-	"fmt"
 	"reflect"
+	"sort"
 )
 
 type peptideCandidate struct {
 	peptide []int
 	mass    int
+	score   int
+}
+
+func newCandidate(peptide []int, mass int) peptideCandidate {
+	return newScoredCandidate(peptide, mass, 0)
+}
+
+func newScoredCandidate(peptide []int, mass, score int) peptideCandidate {
+	return peptideCandidate{peptide, mass, score}
 }
 
 var inverseMassTable = inverse(integerMassTable)
 
 // CyclopeptideSequencing returns the possible peptides with the given
 // cyclo-spectrm.
-func CyclopeptideSequencing(specturm []int) [][]int {
-	parentMass := specturm[len(specturm)-1]
-	spec := map[int]int{}
-	for _, v := range specturm {
-		spec[v] = spec[v] + 1
-	}
+func CyclopeptideSequencing(spectrum []int) [][]int {
+	parentMass := spectrum[len(spectrum)-1]
+	spec := spectrumToMap(spectrum)
 
 	matchingPeptides := [][]int{}
-	candidates := []peptideCandidate{peptideCandidate{[]int{}, 0}}
-	candLen := 0
+	candidates := []peptideCandidate{newCandidate([]int{}, 0)}
 	for len(candidates) != 0 {
 		var expandedCandidates []peptideCandidate
 		for _, candidate := range candidates {
-			if len(candidate.peptide) != candLen {
-				fmt.Println("len is expected to be", candLen, "but is", len(candidate.peptide))
-				panic("")
-			}
 			for mass := range inverseMassTable {
 				cpy := make([]int, len(candidate.peptide)+1)
 				copy(cpy, candidate.peptide)
 				cpy[len(candidate.peptide)] = mass
-				newCandidate := peptideCandidate{cpy, candidate.mass + mass}
+				newCandidate := newCandidate(cpy, candidate.mass+mass)
 				if newCandidate.mass == parentMass {
-					if reflect.DeepEqual(Cyclospectrum(toStringPeptide(newCandidate.peptide)), specturm) {
+					if reflect.DeepEqual(Cyclospectrum(toStringPeptide(newCandidate.peptide)), spectrum) {
 						matchingPeptides = append(matchingPeptides, newCandidate.peptide)
 					}
 				} else if newCandidate.mass < parentMass && consistent(newCandidate.peptide, spec) {
@@ -45,10 +46,70 @@ func CyclopeptideSequencing(specturm []int) [][]int {
 				}
 			}
 		}
-		candLen = candLen + 1
 		candidates = expandedCandidates
 	}
 	return matchingPeptides
+}
+
+// LeaderboardCyclopeptideSequencing returns the highest scoring peptide.
+// In every iteration only the n higest scoring (keeping ties)
+// candidates will be kept then the one with the highest score will be returned.
+func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []int {
+	parentMass := spectrum[len(spectrum)-1]
+	spec := spectrumToMap(spectrum)
+
+	leaderPeptide := newScoredCandidate([]int{}, 0, 0)
+	leaderboard := []peptideCandidate{leaderPeptide}
+	for len(leaderboard) > 0 {
+		var expandedLeaderboard []peptideCandidate
+		for _, candidate := range leaderboard {
+			for mass := range inverseMassTable {
+				if candidate.mass+mass <= parentMass {
+					cpy := make([]int, len(candidate.peptide)+1)
+					copy(cpy, candidate.peptide)
+					cpy[len(candidate.peptide)] = mass
+					score := LinearScore(toStringPeptide(cpy), spec)
+					cand := newScoredCandidate(cpy, candidate.mass+mass, score)
+					expandedLeaderboard = append(expandedLeaderboard, cand)
+					if cand.mass == parentMass {
+						if cand.score > leaderPeptide.score {
+							leaderPeptide = cand
+						}
+					}
+				}
+			}
+		}
+		leaderboard = trim(expandedLeaderboard, n)
+	}
+	return leaderPeptide.peptide
+}
+
+func trim(leaderboard []peptideCandidate, numberToKeep int) []peptideCandidate {
+	if numberToKeep >= len(leaderboard) {
+		return leaderboard
+	}
+	scores := make([]int, len(leaderboard))
+	for i := 0; i < len(leaderboard); i++ {
+		scores[i] = leaderboard[i].score
+	}
+	sort.Ints(scores)
+	minScoreToKeep := scores[len(scores)-numberToKeep]
+
+	var res []peptideCandidate
+	for _, cand := range leaderboard {
+		if cand.score >= minScoreToKeep {
+			res = append(res, cand)
+		}
+	}
+	return res
+}
+
+func spectrumToMap(spectrum []int) map[int]int {
+	spec := map[int]int{}
+	for _, v := range spectrum {
+		spec[v] = spec[v] + 1
+	}
+	return spec
 }
 
 func consistent(peptide []int, spectrum map[int]int) bool {

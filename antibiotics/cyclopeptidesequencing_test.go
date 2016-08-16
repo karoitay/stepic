@@ -24,6 +24,21 @@ func TestCyclopeptideSequencing(t *testing.T) {
 	}
 }
 
+func TestLeaderboardCyclopeptideSequencing(t *testing.T) {
+	n := 10
+	spectrum := []int{0, 71, 113, 129, 147, 200, 218, 260, 313, 331, 347, 389, 460}
+
+	peptide := LeaderboardCyclopeptideSequencing(spectrum, n)
+	peptideScore := LinearScore(toStringPeptide(peptide), spectrumToMap(spectrum))
+
+	expectedPeptide := []int{113, 147, 71, 129}
+	expectedPeptideScore := LinearScore(toStringPeptide(expectedPeptide), spectrumToMap(spectrum))
+
+	if peptideScore < expectedPeptideScore {
+		t.Error("for", n, ",", spectrum, "expected", expectedPeptide, "got", peptide)
+	}
+}
+
 func toStringSlice(ints []int) []string {
 	strings := make([]string, len(ints))
 	for i := 0; i < len(ints); i++ {
