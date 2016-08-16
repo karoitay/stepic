@@ -51,15 +51,15 @@ func CyclopeptideSequencing(spectrum []int) [][]int {
 	return matchingPeptides
 }
 
-// LeaderboardCyclopeptideSequencing returns the highest scoring peptide.
+// LeaderboardCyclopeptideSequencing returns the highest scoring peptides.
 // In every iteration only the n higest scoring (keeping ties)
 // candidates will be kept then the one with the highest score will be returned.
-func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []int {
+func LeaderboardCyclopeptideSequencing(spectrum []int, n int) [][]int {
 	parentMass := spectrum[len(spectrum)-1]
 	spec := spectrumToMap(spectrum)
 
-	leaderPeptide := newScoredCandidate([]int{}, 0, 0)
-	leaderboard := []peptideCandidate{leaderPeptide}
+	leaderPeptides := []peptideCandidate{newScoredCandidate([]int{}, 0, 0)}
+	leaderboard := []peptideCandidate{leaderPeptides[0]}
 	for len(leaderboard) > 0 {
 		var expandedLeaderboard []peptideCandidate
 		for _, candidate := range leaderboard {
@@ -72,8 +72,11 @@ func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []int {
 					cand := newScoredCandidate(cpy, candidate.mass+mass, score)
 					expandedLeaderboard = append(expandedLeaderboard, cand)
 					if cand.mass == parentMass {
-						if cand.score > leaderPeptide.score {
-							leaderPeptide = cand
+						cand.score = CyclicScore(toStringPeptide(cand.peptide), spec)
+						if cand.score > leaderPeptides[0].score {
+							leaderPeptides = []peptideCandidate{cand}
+						} else if cand.score == leaderPeptides[0].score {
+							leaderPeptides = append(leaderPeptides, cand)
 						}
 					}
 				}
@@ -81,7 +84,11 @@ func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []int {
 		}
 		leaderboard = trim(expandedLeaderboard, n)
 	}
-	return leaderPeptide.peptide
+	res := make([][]int, len(leaderPeptides))
+	for i := 0; i < len(leaderPeptides); i++ {
+		res[i] = leaderPeptides[i].peptide
+	}
+	return res
 }
 
 func trim(leaderboard []peptideCandidate, numberToKeep int) []peptideCandidate {
