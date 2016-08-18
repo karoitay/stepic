@@ -1,5 +1,6 @@
 package part1
 
+// FindClumps returns (l, t) clumps in text.
 func FindClumps(text string, k, l, t int) []string {
 	m := map[string][]int{}
 	found := map[string]bool{}

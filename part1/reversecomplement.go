@@ -7,9 +7,10 @@ var rev = map[byte]byte{
 	'T': 'A',
 }
 
+// ReverseComplement returns the reverse complement of text.
 func ReverseComplement(text string) string {
 	l := len(text)
-	res := make([]byte, 0)
+	var res []byte
 	for i := l - 1; i >= 0; i-- {
 		res = append(res, rev[text[i]])
 	}

@@ -7,6 +7,7 @@ var others = map[string][]string{
 	"T": []string{"A", "C", "G"},
 }
 
+// FrequentWords return the most frequent kmers in text.
 func FrequentWords(text string, k int) []string {
 	m := map[string]int{}
 	max := 0
@@ -25,6 +26,8 @@ func FrequentWords(text string, k int) []string {
 	return res
 }
 
+// Neighbours returns all strings with hamming distance at most d from pattern
+// (excluding pattern).
 func Neighbours(pattern string, d int) map[string]int {
 	m := make(map[string]int)
 	if len(pattern) == 1 {
@@ -46,6 +49,8 @@ func Neighbours(pattern string, d int) map[string]int {
 	return m
 }
 
+// FrequentWordsWithMismatch returns the most frequesnt kmers with at-most d
+// mismatches.
 func FrequentWordsWithMismatch(text string, k, d int) []string {
 	m := map[string]int{}
 	max := 0
@@ -65,6 +70,8 @@ func FrequentWordsWithMismatch(text string, k, d int) []string {
 	return res
 }
 
+// FrequentWordsWithMismatchAndReverseComplenent returns the most frequent kmers
+// with at-most d mismatches taking into account reverse complement as well.
 func FrequentWordsWithMismatchAndReverseComplenent(text string, k, d int) []string {
 	m := map[string]int{}
 	max := 0
