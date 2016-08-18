@@ -12,9 +12,9 @@ func LinearScore(peptide string, spectrum map[int]int) int {
 	return score(peptide, spectrum, LinearSpectrum)
 }
 
-func score(peptide string, spectrum map[int]int, spectrunFunc func(string) []int) int {
+func score(peptide string, spectrum map[int]int, spectrumFunc func(string) []int) int {
 	actualSpectrum := map[int]int{}
-	for _, m := range spectrunFunc(peptide) {
+	for _, m := range spectrumFunc(peptide) {
 		actualSpectrum[m] = actualSpectrum[m] + 1
 	}
 	c := 0
