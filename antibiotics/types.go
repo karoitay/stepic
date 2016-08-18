@@ -20,7 +20,7 @@ func NewPeptide(peptide []int) Peptide {
 func NewPeptideFromString(peptide string) Peptide {
 	p := make([]int, len(peptide))
 	for i := 0; i < len(peptide); i++ {
-		p[i] = integerMassTable[peptide[i]]
+		p[i] = proteinogenicMassesTable[peptide[i]]
 	}
 	return Peptide{p}
 }

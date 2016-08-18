@@ -1,6 +1,6 @@
 package antibiotics
 
-var integerMassTable = map[byte]int{
+var proteinogenicMassesTable = map[byte]int{
 	'G': 57,
 	'A': 71,
 	'S': 87,
@@ -22,3 +22,15 @@ var integerMassTable = map[byte]int{
 	'Y': 163,
 	'W': 186,
 }
+
+var proteinogenicMasses = func() []int {
+	var masses []int
+	alreadyIn := map[int]bool{}
+	for _, v := range proteinogenicMassesTable {
+		if !alreadyIn[v] {
+			masses = append(masses, v)
+			alreadyIn[v] = true
+		}
+	}
+	return masses
+}()

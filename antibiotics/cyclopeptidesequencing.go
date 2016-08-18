@@ -19,11 +19,9 @@ func newScoredCandidate(peptide Peptide, mass, score int) peptideCandidate {
 	return peptideCandidate{peptide, mass, score}
 }
 
-var inverseMassTable = inverse(integerMassTable)
-
 // CyclopeptideSequencing returns the possible peptides with the given
 // cyclo-spectrm.
-func CyclopeptideSequencing(spectrum []int) []Peptide {
+func CyclopeptideSequencing(spectrum, availableMasses []int) []Peptide {
 	parentMass := spectrum[len(spectrum)-1]
 	spec := spectrumToMap(spectrum)
 
@@ -32,7 +30,7 @@ func CyclopeptideSequencing(spectrum []int) []Peptide {
 	for len(candidates) != 0 {
 		var expandedCandidates []peptideCandidate
 		for _, candidate := range candidates {
-			for mass := range inverseMassTable {
+			for _, mass := range availableMasses {
 				newCandidate := newCandidate(candidate.peptide.Expand(mass), candidate.mass+mass)
 				if newCandidate.mass == parentMass {
 					if reflect.DeepEqual(Cyclospectrum(newCandidate.peptide), spectrum) {
@@ -51,7 +49,7 @@ func CyclopeptideSequencing(spectrum []int) []Peptide {
 // LeaderboardCyclopeptideSequencing returns the highest scoring peptides.
 // In every iteration only the n higest scoring (keeping ties)
 // candidates will be kept then the one with the highest score will be returned.
-func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []Peptide {
+func LeaderboardCyclopeptideSequencing(spectrum []int, n int, availableMasses []int) []Peptide {
 	parentMass := spectrum[len(spectrum)-1]
 	spec := spectrumToMap(spectrum)
 
@@ -60,7 +58,7 @@ func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []Peptide {
 	for len(leaderboard) > 0 {
 		var expandedLeaderboard []peptideCandidate
 		for _, candidate := range leaderboard {
-			for mass := range inverseMassTable {
+			for _, mass := range availableMasses {
 				if candidate.mass+mass <= parentMass {
 					expanded := candidate.peptide.Expand(mass)
 					score := LinearScore(expanded, spec)
@@ -126,12 +124,4 @@ func consistent(peptide Peptide, spectrum map[int]int) bool {
 		}
 	}
 	return true
-}
-
-func inverse(table map[byte]int) map[int]byte {
-	inverse := map[int]byte{}
-	for k, v := range table {
-		inverse[v] = k
-	}
-	return inverse
 }

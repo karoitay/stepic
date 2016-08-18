@@ -15,10 +15,8 @@ func cachedPeptideCountForMass(cache map[int]int, m int) int {
 		return c
 	}
 	c := 0
-	for p, mass := range integerMassTable {
-		if p != 'L' && p != 'Q' {
-			c = c + cachedPeptideCountForMass(cache, m-mass)
-		}
+	for _, mass := range proteinogenicMasses {
+		c = c + cachedPeptideCountForMass(cache, m-mass)
 	}
 	cache[m] = c
 	return c

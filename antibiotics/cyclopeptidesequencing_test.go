@@ -10,7 +10,7 @@ func TestCyclopeptideSequencing(t *testing.T) {
 	spectrum := []int{0, 113, 128, 186, 241, 299, 314, 427}
 
 	var output []string
-	for _, peptide := range CyclopeptideSequencing(spectrum) {
+	for _, peptide := range CyclopeptideSequencing(spectrum, proteinogenicMasses) {
 		output = append(output, peptide.ToString())
 	}
 
@@ -26,7 +26,7 @@ func TestLeaderboardCyclopeptideSequencing(t *testing.T) {
 	n := 10
 	spectrum := []int{0, 71, 113, 129, 147, 200, 218, 260, 313, 331, 347, 389, 460}
 
-	peptide := LeaderboardCyclopeptideSequencing(spectrum, n)[0]
+	peptide := LeaderboardCyclopeptideSequencing(spectrum, n, proteinogenicMasses)[0]
 	peptideScore := CyclicScore(peptide, spectrumToMap(spectrum))
 
 	expectedPeptide := NewPeptide([]int{113, 147, 71, 129})
