@@ -128,14 +128,6 @@ func consistent(peptide Peptide, spectrum map[int]int) bool {
 	return true
 }
 
-func toStringPeptide(peptide []int) string {
-	bytes := make([]byte, len(peptide))
-	for i := 0; i < len(peptide); i++ {
-		bytes[i] = inverseMassTable[peptide[i]]
-	}
-	return string(bytes)
-}
-
 func inverse(table map[byte]int) map[int]byte {
 	inverse := map[int]byte{}
 	for k, v := range table {
