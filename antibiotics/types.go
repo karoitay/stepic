@@ -41,3 +41,24 @@ func (p Peptide) ToString() string {
 	}
 	return strings.Join(massesStrings, "-")
 }
+
+// IsCyclicEqualTo returns true if another cyclic peptide is equal to the
+// the receiver.
+func (p Peptide) IsCyclicEqualTo(other Peptide) bool {
+	l := len(p.Masses)
+	if l != len(other.Masses) {
+		return false
+	}
+	for i := 0; i < l; i++ {
+		eq := true
+		for j := 0; j < l; j++ {
+			if p.Masses[j] != other.Masses[(i+j)%l] {
+				eq = false
+			}
+		}
+		if eq {
+			return true
+		}
+	}
+	return false
+}

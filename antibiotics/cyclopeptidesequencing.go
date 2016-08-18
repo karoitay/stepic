@@ -84,6 +84,36 @@ func LeaderboardCyclopeptideSequencing(spectrum []int, n int, availableMasses []
 	return res
 }
 
+// ConvolutionCyclopeptideSequencing first finds the most m frequent masses
+// in the spectrum's spectral convolution and then runs
+// LeaderboardCyclopeptideSequencing with these masses only keeping n leaders.
+func ConvolutionCyclopeptideSequencing(spectrum []int, m, n int) []Peptide {
+	massCount := map[int]int{}
+	for _, mass := range SpectralConvolution(spectrum) {
+		if mass >= 57 && mass <= 200 {
+			massCount[mass] = massCount[mass] + 1
+		}
+	}
+	counts := make([]int, len(massCount))
+	i := 0
+	for _, v := range massCount {
+		counts[i] = v
+		i++
+	}
+	sort.Ints(counts)
+	minCount := counts[0]
+	if len(counts) > m {
+		minCount = counts[len(counts)-m]
+	}
+	masses := []int{}
+	for k, v := range massCount {
+		if v >= minCount {
+			masses = append(masses, k)
+		}
+	}
+	return LeaderboardCyclopeptideSequencing(spectrum, n, masses)
+}
+
 func trim(leaderboard []peptideCandidate, numberToKeep int) []peptideCandidate {
 	if numberToKeep >= len(leaderboard) {
 		return leaderboard

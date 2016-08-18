@@ -38,3 +38,20 @@ func TestLeaderboardCyclopeptideSequencing(t *testing.T) {
 			"got", peptide.ToString(), "with score", peptideScore)
 	}
 }
+
+func TestConvolutionCyclopeptideSequencing(t *testing.T) {
+	m, n := 20, 60
+	spectrum := []int{57, 57, 71, 99, 129, 137, 170, 186, 194, 208, 228, 265, 285, 299, 307, 323, 356, 364, 394, 422, 493}
+
+	peptides := ConvolutionCyclopeptideSequencing(spectrum, m, n)
+
+	expectedPeptide := NewPeptide([]int{99, 71, 137, 57, 72, 57})
+
+	for _, peptide := range peptides {
+		if peptide.IsCyclicEqualTo(expectedPeptide) {
+			return
+		}
+	}
+
+	t.Error("for", m, n, spectrum, "failed to find", expectedPeptide, "in", peptides)
+}
