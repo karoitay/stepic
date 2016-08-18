@@ -2,17 +2,17 @@ package antibiotics
 
 // CyclicScore returns the number of matches between peptide's cyclic spectrum
 // and a given spectrum.
-func CyclicScore(peptide string, spectrum map[int]int) int {
+func CyclicScore(peptide Peptide, spectrum map[int]int) int {
 	return score(peptide, spectrum, Cyclospectrum)
 }
 
 // LinearScore returns the number of matches between peptide's linear spectrum
 // and a given spectrum.
-func LinearScore(peptide string, spectrum map[int]int) int {
+func LinearScore(peptide Peptide, spectrum map[int]int) int {
 	return score(peptide, spectrum, LinearSpectrum)
 }
 
-func score(peptide string, spectrum map[int]int, spectrumFunc func(string) []int) int {
+func score(peptide Peptide, spectrum map[int]int, spectrumFunc func(Peptide) []int) int {
 	actualSpectrum := map[int]int{}
 	for _, m := range spectrumFunc(peptide) {
 		actualSpectrum[m] = actualSpectrum[m] + 1

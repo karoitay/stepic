@@ -6,7 +6,7 @@ import (
 )
 
 func TestLinearSpectrum(t *testing.T) {
-	peptide := "NQEL"
+	peptide := NewPeptideFromString("NQEL")
 
 	spectrum := LinearSpectrum(peptide)
 

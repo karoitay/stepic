@@ -6,16 +6,16 @@ import (
 )
 
 type peptideCandidate struct {
-	peptide []int
+	peptide Peptide
 	mass    int
 	score   int
 }
 
-func newCandidate(peptide []int, mass int) peptideCandidate {
+func newCandidate(peptide Peptide, mass int) peptideCandidate {
 	return newScoredCandidate(peptide, mass, 0)
 }
 
-func newScoredCandidate(peptide []int, mass, score int) peptideCandidate {
+func newScoredCandidate(peptide Peptide, mass, score int) peptideCandidate {
 	return peptideCandidate{peptide, mass, score}
 }
 
@@ -23,22 +23,19 @@ var inverseMassTable = inverse(integerMassTable)
 
 // CyclopeptideSequencing returns the possible peptides with the given
 // cyclo-spectrm.
-func CyclopeptideSequencing(spectrum []int) [][]int {
+func CyclopeptideSequencing(spectrum []int) []Peptide {
 	parentMass := spectrum[len(spectrum)-1]
 	spec := spectrumToMap(spectrum)
 
-	matchingPeptides := [][]int{}
-	candidates := []peptideCandidate{newCandidate([]int{}, 0)}
+	matchingPeptides := []Peptide{}
+	candidates := []peptideCandidate{newCandidate(NewPeptideFromString(""), 0)}
 	for len(candidates) != 0 {
 		var expandedCandidates []peptideCandidate
 		for _, candidate := range candidates {
 			for mass := range inverseMassTable {
-				cpy := make([]int, len(candidate.peptide)+1)
-				copy(cpy, candidate.peptide)
-				cpy[len(candidate.peptide)] = mass
-				newCandidate := newCandidate(cpy, candidate.mass+mass)
+				newCandidate := newCandidate(candidate.peptide.Expand(mass), candidate.mass+mass)
 				if newCandidate.mass == parentMass {
-					if reflect.DeepEqual(Cyclospectrum(toStringPeptide(newCandidate.peptide)), spectrum) {
+					if reflect.DeepEqual(Cyclospectrum(newCandidate.peptide), spectrum) {
 						matchingPeptides = append(matchingPeptides, newCandidate.peptide)
 					}
 				} else if newCandidate.mass < parentMass && consistent(newCandidate.peptide, spec) {
@@ -54,25 +51,23 @@ func CyclopeptideSequencing(spectrum []int) [][]int {
 // LeaderboardCyclopeptideSequencing returns the highest scoring peptides.
 // In every iteration only the n higest scoring (keeping ties)
 // candidates will be kept then the one with the highest score will be returned.
-func LeaderboardCyclopeptideSequencing(spectrum []int, n int) [][]int {
+func LeaderboardCyclopeptideSequencing(spectrum []int, n int) []Peptide {
 	parentMass := spectrum[len(spectrum)-1]
 	spec := spectrumToMap(spectrum)
 
-	leaderPeptides := []peptideCandidate{newScoredCandidate([]int{}, 0, 0)}
+	leaderPeptides := []peptideCandidate{newScoredCandidate(NewPeptideFromString(""), 0, 0)}
 	leaderboard := []peptideCandidate{leaderPeptides[0]}
 	for len(leaderboard) > 0 {
 		var expandedLeaderboard []peptideCandidate
 		for _, candidate := range leaderboard {
 			for mass := range inverseMassTable {
 				if candidate.mass+mass <= parentMass {
-					cpy := make([]int, len(candidate.peptide)+1)
-					copy(cpy, candidate.peptide)
-					cpy[len(candidate.peptide)] = mass
-					score := LinearScore(toStringPeptide(cpy), spec)
-					cand := newScoredCandidate(cpy, candidate.mass+mass, score)
+					expanded := candidate.peptide.Expand(mass)
+					score := LinearScore(expanded, spec)
+					cand := newScoredCandidate(expanded, candidate.mass+mass, score)
 					expandedLeaderboard = append(expandedLeaderboard, cand)
 					if cand.mass == parentMass {
-						cand.score = CyclicScore(toStringPeptide(cand.peptide), spec)
+						cand.score = CyclicScore(cand.peptide, spec)
 						if cand.score > leaderPeptides[0].score {
 							leaderPeptides = []peptideCandidate{cand}
 						} else if cand.score == leaderPeptides[0].score {
@@ -84,7 +79,7 @@ func LeaderboardCyclopeptideSequencing(spectrum []int, n int) [][]int {
 		}
 		leaderboard = trim(expandedLeaderboard, n)
 	}
-	res := make([][]int, len(leaderPeptides))
+	res := make([]Peptide, len(leaderPeptides))
 	for i := 0; i < len(leaderPeptides); i++ {
 		res[i] = leaderPeptides[i].peptide
 	}
@@ -119,8 +114,8 @@ func spectrumToMap(spectrum []int) map[int]int {
 	return spec
 }
 
-func consistent(peptide []int, spectrum map[int]int) bool {
-	lSpec := LinearSpectrum(toStringPeptide(peptide))
+func consistent(peptide Peptide, spectrum map[int]int) bool {
+	lSpec := LinearSpectrum(peptide)
 	counts := map[int]int{}
 	for _, v := range lSpec {
 		counts[v] = counts[v] + 1

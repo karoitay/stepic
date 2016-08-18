@@ -3,11 +3,11 @@ package antibiotics
 import "sort"
 
 // LinearSpectrum computes the linear spectrum of a peptide.
-func LinearSpectrum(peptide string) []int {
-	prefixMass := make([]int, len(peptide)+1)
+func LinearSpectrum(peptide Peptide) []int {
+	prefixMass := make([]int, len(peptide.Masses)+1)
 	prefixMass[0] = 0
-	for i := 0; i < len(peptide); i++ {
-		prefixMass[i+1] = prefixMass[i] + integerMassTable[peptide[i]]
+	for i := 0; i < len(peptide.Masses); i++ {
+		prefixMass[i+1] = prefixMass[i] + peptide.Masses[i]
 	}
 
 	spectrum := []int{0}

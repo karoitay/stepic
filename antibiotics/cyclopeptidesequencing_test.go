@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"sort"
 	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -12,8 +11,8 @@ func TestCyclopeptideSequencing(t *testing.T) {
 	spectrum := []int{0, 113, 128, 186, 241, 299, 314, 427}
 
 	var output []string
-	for _, seq := range CyclopeptideSequencing(spectrum) {
-		output = append(output, strings.Join(toStringSlice(seq), "-"))
+	for _, peptide := range CyclopeptideSequencing(spectrum) {
+		output = append(output, peptide.ToString())
 	}
 
 	sort.Strings(output)
@@ -29,13 +28,15 @@ func TestLeaderboardCyclopeptideSequencing(t *testing.T) {
 	spectrum := []int{0, 71, 113, 129, 147, 200, 218, 260, 313, 331, 347, 389, 460}
 
 	peptide := LeaderboardCyclopeptideSequencing(spectrum, n)[0]
-	peptideScore := LinearScore(toStringPeptide(peptide), spectrumToMap(spectrum))
+	peptideScore := CyclicScore(peptide, spectrumToMap(spectrum))
 
-	expectedPeptide := []int{113, 147, 71, 129}
-	expectedPeptideScore := LinearScore(toStringPeptide(expectedPeptide), spectrumToMap(spectrum))
+	expectedPeptide := NewPeptide([]int{113, 147, 71, 129})
+	expectedPeptideScore := CyclicScore(expectedPeptide, spectrumToMap(spectrum))
 
 	if peptideScore < expectedPeptideScore {
-		t.Error("for", n, ",", spectrum, "expected", expectedPeptide, "got", peptide)
+		t.Error("for", n, ",", spectrum,
+			"expected", expectedPeptide.ToString(), "with score", expectedPeptideScore,
+			"got", peptide.ToString(), "with score", peptideScore)
 	}
 }
 

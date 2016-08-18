@@ -2,35 +2,26 @@ package antibiotics
 
 import "sort"
 
-func peptideMassFunc() func(string) int {
-	cache := map[string]int{}
-	return func(peptide string) int {
-		mass := 0
-		if m, ok := cache[peptide[1:]]; ok {
-			mass = integerMassTable[peptide[0]] + m
-		} else {
-			for i := 0; i < len(peptide); i++ {
-				mass = mass + integerMassTable[peptide[i]]
+// Cyclospectrum returns the theoretical spectrum of a peptide.
+func Cyclospectrum(peptide Peptide) []int {
+	prefixMass := make([]int, len(peptide.Masses)+1)
+	prefixMass[0] = 0
+	for i := 0; i < len(peptide.Masses); i++ {
+		prefixMass[i+1] = prefixMass[i] + peptide.Masses[i]
+	}
+	peptideMass := prefixMass[len(prefixMass)-1]
+
+	spectrum := []int{0}
+	for i := 0; i < len(prefixMass)-1; i++ {
+		for j := i + 1; j < len(prefixMass); j++ {
+			mass := prefixMass[j] - prefixMass[i]
+			spectrum = append(spectrum, mass)
+			if i > 0 && j < len(prefixMass)-1 {
+				spectrum = append(spectrum, peptideMass-mass)
 			}
 		}
-		cache[peptide] = mass
-		return mass
 	}
-}
 
-// Cyclospectrum returns the theoretical spectrum of a peptide.
-func Cyclospectrum(peptide string) []int {
-	spectrum := []int{0}
-	peptideMass := peptideMassFunc()
-	doubledPeptide := peptide + peptide
-	for i := 1; i < len(peptide); i++ {
-		for j := 0; j < len(peptide); j++ {
-			sub := doubledPeptide[j : j+i]
-			m := peptideMass(sub)
-			spectrum = append(spectrum, m)
-		}
-	}
-	spectrum = append(spectrum, peptideMass(peptide))
 	sort.Ints(spectrum)
 	return spectrum
 }

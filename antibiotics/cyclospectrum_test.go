@@ -6,7 +6,7 @@ import (
 )
 
 func TestCyclospectrum(t *testing.T) {
-	peptide := "LEQN"
+	peptide := NewPeptideFromString("LEQN")
 
 	actualSpectrum := Cyclospectrum(peptide)
 
