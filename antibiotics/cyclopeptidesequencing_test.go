@@ -3,7 +3,6 @@ package antibiotics
 import (
 	"reflect"
 	"sort"
-	"strconv"
 	"testing"
 )
 
@@ -38,12 +37,4 @@ func TestLeaderboardCyclopeptideSequencing(t *testing.T) {
 			"expected", expectedPeptide.ToString(), "with score", expectedPeptideScore,
 			"got", peptide.ToString(), "with score", peptideScore)
 	}
-}
-
-func toStringSlice(ints []int) []string {
-	strings := make([]string, len(ints))
-	for i := 0; i < len(ints); i++ {
-		strings[i] = strconv.Itoa(ints[i])
-	}
-	return strings
 }
